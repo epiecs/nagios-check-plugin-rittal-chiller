@@ -134,6 +134,10 @@ class checkRittalChiller
 
         switch (true)
         {
+                case $fanSpeed < 1:
+                echo "{$fanSpeed}{$unit}|'{$unit}'={$fanSpeed};{$warningFanSpeed};{$maxFanSpeed};0;{$maxValue}";
+                exit(self::STATE_CRITICAL);
+
                 case $fanSpeed < $warningFanSpeed:
                 echo "{$fanSpeed}{$unit}|'{$unit}'={$fanSpeed};{$warningFanSpeed};{$maxFanSpeed};0;{$maxValue}";
                 exit(self::STATE_OK);
@@ -143,10 +147,6 @@ class checkRittalChiller
                 exit(self::STATE_WARNING);
 
                 case $fanSpeed >= $maxFanSpeed:
-                echo "{$fanSpeed}{$unit}|'{$unit}'={$fanSpeed};{$warningFanSpeed};{$maxFanSpeed};0;{$maxValue}";
-                exit(self::STATE_CRITICAL);
-
-                case $fanSpeed == 0:
                 echo "{$fanSpeed}{$unit}|'{$unit}'={$fanSpeed};{$warningFanSpeed};{$maxFanSpeed};0;{$maxValue}";
                 exit(self::STATE_CRITICAL);
 
