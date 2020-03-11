@@ -26,7 +26,7 @@ class checkRittalChiller
     private $communityString = 'public';
 
     private $oid = [
-        'uptime'             => '1.3.6.1.2.1.1.3.0',
+        'webinterface'       => '1.3.6.1.4.1.2021.2.1.100.2',
         'hotairtemp'         => '1.3.6.1.4.1.9839.2.1.2.21.0',
         'coldairtemp'        => '1.3.6.1.4.1.9839.2.1.2.22.0',
         'fanspeedpercentage' => '1.3.6.1.4.1.9839.2.1.3.28.0',
@@ -62,6 +62,9 @@ class checkRittalChiller
 
         switch ($check)
         {
+            case "webinterface":
+                $this->checkWebinterface($snmpValue);
+            break;
             case "hotairtemp":
             case "coldairtemp":
                 $this->checkAirTemp($snmpValue, $options['W'], $options['M']);
@@ -111,9 +114,11 @@ class checkRittalChiller
 
     /**
      * Checks the temperature values of the chiller
-     * @param int $temperature        The current temperature
-     * @param int $warningTemperature Temperature that should raise an warning
-     * @param int $maxTemperature     Critical temperature
+     * @param  float  $fanSpeed        current fanspeed measurement in percentage or rpm
+     * @param  string $measuringUnit   percentage or rpm
+     * @param  int    $warningFanSpeed warning rpm or percentage
+     * @param  int    $maxFanSpeed     max rpm or percentage
+     * @return void
      */
 
     private function checkFanSpeed(int $fanSpeed, string $measuringUnit, int $warningFanSpeed, int $maxFanSpeed) :void
@@ -153,6 +158,31 @@ class checkRittalChiller
                 default:
                 echo "0{$unit}|'{$unit}'={$fanSpeed};{$warningFanSpeed};{$maxFanSpeed};0;{$maxValue}";
                 exit(self::STATE_UNKNOWN);
+        }
+    }
+
+    /**
+     * Checks if the webinterface is still running
+     * @param int $thttpdStatus     Status of the web process. 0 or 1
+     *
+     * @return void
+     */
+
+    private function checkWebinterface($thttpdStatus) :void
+    {
+        switch ($thttpdStatus)
+        {
+                case 0:
+                    echo "Web interface running";
+                    exit(self::STATE_OK);
+
+                case 1:
+                    echo "Web interface not running";
+                    exit(self::STATE_CRITICAL);
+
+                default:
+                    echo "Web interface not running";
+                    exit(self::STATE_CRITICAL);
         }
     }
 
