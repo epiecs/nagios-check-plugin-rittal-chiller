@@ -60,6 +60,23 @@ define host {
 
 define service {
     host_name                DC1 Chiller 1
+    service_description      Pco module
+    servicegroups            Datacenter devices
+    check_command            check_rittal_chiller_webinterface!!!!!!!!
+    max_check_attempts       5
+    check_interval           5
+    retry_interval           1
+    check_period             xi_timeperiod_24x7
+    notification_interval    1440
+    notification_period      24x7
+    notification_options     w,c,
+    notifications_enabled    1
+    contact_groups           Networking
+    register                 1
+}
+
+define service {
+    host_name                DC1 Chiller 1
     service_description      Cold air temperature
     servicegroups            chillers, datacenter
     check_command            check_rittal_chiller_coldairtemp!25!28!
@@ -70,7 +87,7 @@ define service {
     notification_interval    1440
     notification_period      24x7
     notification_options     w,c,
-    notifications_enabled    0
+    notifications_enabled    1
     contact_groups           Networking
     register                 1
 }
